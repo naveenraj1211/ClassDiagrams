@@ -1,0 +1,118 @@
+@startuml
+
+class TicTacToeGame {
+    -board: Board
+    -players: Player[2]
+    -currentPlayerIndex: int
+    -moveHistory: MoveHistory
+
+    +getCurrentPlayer(): Player
+    +makeMove(int row, int col, Player player)
+    +checkWinner(): Optional<Player>
+    +getGameState: GameState
+
+    +displayBoard()
+    +resetGame()
+
+    +displayInstructions(): String
+
+}
+
+class Board {
+    -cells: Cell[3][3]
+    +getCell(): Cell
+    +setCell(int row, int col, Mark mark)
+    +isFull(): boolean
+    +clear()
+}
+
+class Cell {
+    -row: int
+    -col: int
+    -cellState: CellState
+    +isEmpty(): boolean
+    +setMark(Mark mark)
+    +getMark(): Mark
+}
+
+class Player {
+    -name:String
+    -cellState: CellState
+    +getName(): String
+    +getMark(): Mark
+}
+
+class Move
+{
+    - player: Player
+    - row: int
+    - col: int
+}
+
+class MoveHistory
+{
+    - moves: List<Move>
+    + getMoves(): List<Move>
+    + addMove(Move move)
+    - undoLastMove()
+}
+
+class GameRules
+{
+    +isValidMove(Board board, int row, int col): boolean
+    +checkForWinner(Board board): Optional<Player>
+    +updateGameState(Board board): GameState
+    +getGameInstructions(): String
+}
+
+enum CellState
+{
+    EMPTY
+    X
+    O
+}
+
+enum GameState
+{
+    IN_PROGRESS
+    DRAW
+    WINNER
+
+}
+
+interface WinningStrategy
+{
+    +checkWinner(Board board, List~Player~ players) Optional~Player~
+}
+
+interface RowWinningStrategy
+{
+    +checkWinner(Board board, List~Player~ players) Optional~Player~
+}
+
+
+interface ColumnWinningStrategy
+{
+    +checkWinner(Board board, List~Player~ players) Optional~Player~
+}
+
+interface DiagonalWinningStrategy
+{
+    +checkWinner(Board board, List~Player~ players) Optional~Player~
+}
+
+
+TicTacToeGame "1" *-- "1" Board
+TicTacToeGame "1" *-- "*" Player
+TicTacToeGame "1" *-- "1" MoveHistory
+TicTacToeGame "1" *--  "1" GameRules
+Player -- CellState
+Board "1" *-- "*" Cell
+MoveHistory "1" *-- "*" Move
+Move "1" -- "1" Player
+GameRules "1" *-- "*" WinningStrategy
+WinningStrategy <|.. RowWinningStrategy
+WinningStrategy <|.. ColumnWinningStrategy
+WinningStrategy <|.. DiagonalWinningStrategy
+
+@enduml

@@ -1,0 +1,133 @@
+@startuml
+
+class ChessGame {
+  -board: ChessBoard
+  -players: Player[2]
+  -currentPlayer: Player
+  -gameStatus: GameStatus
+  -moveValidator: MoveValidator
+  -gameStateManager: GameStateManager
+  +startNewGame()
+  +makeMove(player: Player, from: Position, to: Position): boolean
+  +getCurrentPlayer(): Player
+  +switchPlayer()
+}
+
+class ChessBoard {
+  -squares: Square[8][8]
+  +getSquare(position: Position): Square
+  +movePiece(from: Position, to: Position)
+  +removePiece(position: Position)
+}
+
+class Square {
+  -position: Position
+  -piece: Piece
+  +getPosition(): Position
+  +getPiece(): Piece
+  +setPiece(piece: Piece)
+  +isEmpty(): boolean
+}
+
+class Position {
+  -file: char
+  -rank: int
+  +getFile(): char
+  +getRank(): int
+}
+
+class Player {
+  -color: Color
+  -pieces: Set<Piece>
+  +getColor(): Color
+  +getPieces(): Set<Piece>
+}
+
+abstract class Piece {
+  #color: Color
+  #position: Position
+  +getColor(): Color
+  +getPosition(): Position
+  +setPosition(position: Position)
+  +getLegalMoves(board: ChessBoard): List<Position>
+}
+
+class King {
+  -castlingStrategy: CastlingStrategy
+}
+
+class Queen
+class Bishop
+class Knight
+class Rook
+
+class Pawn {
+  -promotionStrategy: PawnPromotionStrategy
+  -enPassantStrategy: EnPassantStrategy
+}
+
+enum Color {
+  WHITE
+  BLACK
+}
+
+enum GameStatus {
+  ONGOING
+  CHECK
+  CHECKMATE
+  STALEMATE
+}
+
+interface MoveValidator {
+  +isValidMove(board: ChessBoard, from: Position, to: Position): boolean
+}
+
+interface GameStateManager {
+  +updateGameState(board: ChessBoard): GameStatus
+  +isCheck(board: ChessBoard, color: Color): boolean
+  +isCheckmate(board: ChessBoard, color: Color): boolean
+  +isStalemate(board: ChessBoard, color: Color): boolean
+}
+
+interface PieceMovementStrategy {
+  +getLegalMoves(piece: Piece, board: ChessBoard): List<Position>
+}
+
+interface CastlingStrategy {
+  +canCastle(king: King, board: ChessBoard): boolean
+  +performCastling(king: King, board: ChessBoard): void
+}
+
+interface PawnPromotionStrategy {
+  +canPromote(pawn: Pawn, board: ChessBoard): boolean
+  +promote(pawn: Pawn, newPieceType: Class): Piece
+}
+
+interface EnPassantStrategy {
+  +canEnPassant(pawn: Pawn, board: ChessBoard): boolean
+  +performEnPassant(pawn: Pawn, board: ChessBoard): void
+}
+
+ChessGame "1" *-- "1" ChessBoard
+ChessGame "1" *-- "2" Player
+ChessGame "1" *-- "1" GameStatus
+ChessGame "1" *-- "1" MoveValidator
+ChessGame "1" *-- "1" GameStateManager
+ChessBoard "1" *-- "64" Square
+Square "1" *-- "0..1" Piece
+Square "1" *-- "1" Position
+Player "1" *-- "1" Color
+Player "1" *-- "*" Piece
+Piece <|-- King
+Piece <|-- Queen
+Piece <|-- Bishop
+Piece <|-- Knight
+Piece <|-- Rook
+Piece <|-- Pawn
+Piece "1" *-- "1" Color
+Piece ..> PieceMovementStrategy
+King "1" *-- "1" CastlingStrategy
+Pawn "1" *-- "1" PawnPromotionStrategy
+Pawn "1" *-- "1" EnPassantStrategy
+
+@enduml
