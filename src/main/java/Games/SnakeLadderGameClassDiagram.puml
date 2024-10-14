@@ -1,0 +1,86 @@
+@startuml
+
+class Game
+{
+    -board: Board
+    -players: Player[]
+    -dice: Dice
+    -currentPlayerIndex: int
+
+    +startGame()
+    +getCurrentPlayer(): Player
+    +addPlayer(player:Player):void
+    +checkWinner(): Optional<Player>
+    +getGameState: GameState
+
+}
+
+class Player
+{
+    -id: int
+    -name:String
+    -position: int
+
+    +rollDice():int
+    +getPosition():int
+    +setPosition():int
+}
+
+
+class Board
+{
+   -cells:List<Cell>
+   -addGameItem(item:GameItem): void
+   +getCell(number: int): Cell
+}
+
+class Cell
+{
+    -number:int
+    -item:GameItem
+    +getNumber(): int
+    -getItems():GameItem
+    +addGameItem(item:GameItem):void
+    +triggerEffect(player:Player):void
+}
+enum GameState
+{
+    IN_PROGRESS
+    DRAW
+    WON
+}
+
+class Dice
+{
+    +roll(): int
+}
+
+abstract class GameItem
+{
+    -position: int
+    +applyEffect(player:Player):void
+}
+
+class Snake
+{
+    -tail: int
+    +Snake(mouth: int, tail: int)
+    +applyEffect(player:Player):void
+}
+
+class Ladder
+{
+    -top: int
+    +Ladder(bottom: int, top: int)
+    +applyEffect(player:Player):void
+}
+Game "1" *-- "1" Board
+Game "1" *-- "2..4" Player
+Game "1" *-- "1" Dice
+Game "1" *-- "1" GameState
+Board "1" *-- "100" Cell
+Board "1" *-- "0..*" GameItem
+Cell "1" *-- "1" GameItem
+GameItem <|-- Snake
+GameItem <|-- Ladder
+@enduml
