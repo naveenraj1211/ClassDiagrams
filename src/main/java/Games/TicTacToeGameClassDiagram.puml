@@ -85,18 +85,18 @@ interface WinningStrategy
     +checkWinner(Board board, List~Player~ players) Optional~Player~
 }
 
-interface RowWinningStrategy
+class RowWinningStrategy
 {
     +checkWinner(Board board, List~Player~ players) Optional~Player~
 }
 
 
-interface ColumnWinningStrategy
+class ColumnWinningStrategy
 {
     +checkWinner(Board board, List~Player~ players) Optional~Player~
 }
 
-interface DiagonalWinningStrategy
+class DiagonalWinningStrategy
 {
     +checkWinner(Board board, List~Player~ players) Optional~Player~
 }

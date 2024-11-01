@@ -1,0 +1,114 @@
+@startuml
+
+
+class Game{
+
+    -deck: DECK
+    -players: List<Player>
+    -status: GameState
+    -winningStrategy: WinningStrategy
+    -rules: List<Rule>
+
+    +startNewGame()
+    +distributeCards()
+    +declareWinner(): Player
+    +validateRules(): boolean
+
+}
+
+class DECK{
+    -cards: List<Card>
+
+    +shuffleCards()
+    +dealCard(): Card
+    +getRemainingCardCount(): int
+}
+
+class Player{
+
+    -name: String
+    -cards: List<Card>
+    -score: int
+    receiveCard(card: Card)
+    showCards(): List<Card>
+    calculateScore(scoringStrategy: ScoringStrategy): int
+}
+class Card{
+    -rank: RANK
+    -suit: SUIT
+
+    +getRank():RANK
+    +getSuit():SUIT
+
+}
+
+interface WinningStrategy{
+
+    +checkWinner(players: List<Player>):Player
+}
+
+class HighestCardWinningStrategy{
+    +checkWinner(players: List<Player>):Player
+}
+
+interface Rule{
+    +validate(players: List<Player>)): boolean
+}
+
+class BasicRule{
+     +validate(players: List<Player>)): boolean
+}
+
+
+interface ScoringStrategy{
+    +calculateScore(player: Player): int
+}
+
+class SimpleScoringStrategy{
+      +calculateScore(player: Player): int
+}
+
+enum GameState{
+    NOT_STARTED
+    IN_PROGRESS
+    COMPLETED
+}
+
+enum SUIT{
+    HEART
+    DIAMOND
+    CLUB
+    SPADE
+}
+
+enum RANK{
+    ACE
+    KING
+    QUEEN
+    JACK
+    2
+    3
+    4
+    5
+    6
+    7
+    8
+    9
+    10
+}
+
+Game "1" *-- "1" DECK
+Game "1" *-- "2..4" Player
+Game "1" *-- "1" GameState
+Game "1" *-- "1" WinningStrategy
+Game "1" *-- "1..*" Rule
+DECK "1" *-- "1..*" Card
+Player "1" -- "0..*" Card
+Player "1" -- "1" ScoringStrategy
+Card "1" -- "1" SUIT
+Card "1" -- "1" RANK
+WinningStrategy <|.. HighestCardWinningStrategy
+Rule <|.. BasicRule
+ScoringStrategy <|.. SimpleScoringStrategy
+
+@enduml
